@@ -65,7 +65,7 @@ namespace LiveSplit.DXTF
 
         public string UpdateURL
         {
-            get { return "https://raw.githubusercontent.com/SuiMachine/LiveSplit.DXTF/"; }
+            get { return "https://raw.githubusercontent.com/SuiMachine/LiveSplit.DXTF/master/"; }
         }
 
         public Version Version
