@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LiveSplit.ComponentUtil;
+
 
 namespace LiveSplit.DXTF
 {
@@ -160,7 +162,7 @@ namespace LiveSplit.DXTF
                 return null;
             }
 
-            if (game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXTF )
+            if (game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXTF )
             {
                 _ignorePIDs.Add(game.Id);
                 _uiThread.Send(d => MessageBox.Show("Unexpected game version. Deus Ex The Fall (1.1) is required.", "LiveSplit.DXTF",

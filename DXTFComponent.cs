@@ -1,10 +1,7 @@
 ﻿using LiveSplit.Model;
-using LiveSplit.TimeFormatters;
 using LiveSplit.UI.Components;
 using LiveSplit.UI;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Xml;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -33,6 +30,7 @@ namespace LiveSplit.DXTF
             this.IsLayoutComponent = isLayoutComponent;
 
            _timer = new TimerModel { CurrentState = state };
+           _timer.CurrentState.OnStart += timer_OnStart;
 
             _gameMemory = new GameMemory(this.Settings);
             _gameMemory.OnLoadStarted += gameMemory_OnLoadStarted;
@@ -41,9 +39,12 @@ namespace LiveSplit.DXTF
             _gameMemory.StartMonitoring();
         }
 
+
+
         public override void Dispose()
         {
             this.Disposed = true;
+            _timer.CurrentState.OnStart -= timer_OnStart;
 
             _state.OnStart -= State_OnStart;
 
@@ -52,6 +53,10 @@ namespace LiveSplit.DXTF
                 _gameMemory.Stop();
             }
 
+        }
+        private void timer_OnStart(object sender, EventArgs e)
+        {
+            _timer.InitializeGameTime();
         }
 
         void State_OnStart(object sender, EventArgs e)
