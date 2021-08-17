@@ -14,13 +14,18 @@ namespace LiveSplit.DXTF
     {
         public event EventHandler OnLoadStarted;
         public event EventHandler OnLoadFinished;
+        public event EventHandler OnLevelChanged;
+        public event EventHandler OnFirstLevelLoad;
+        public event EventHandler OnFirstLevelAutostart;
 
         private Task _thread;
         private CancellationTokenSource _cancelSource;
         private SynchronizationContext _uiThread;
         private List<int> _ignorePIDs;
 
-        private DeepPointer _IsLoading;
+        private DeepPointer _MJustLoadedLevel;
+        private DeepPointer _MLevelToLoadPtr;
+
 
         private enum ExpectedDllSizes
         {
@@ -35,7 +40,8 @@ namespace LiveSplit.DXTF
         {
             resetSplitStates();
 
-            _IsLoading = new DeepPointer(0x009E22BC, 0x84);
+            _MJustLoadedLevel = new DeepPointer("mono.dll", 0x0021F654, 0x10, 0x164, 0x13);
+            _MLevelToLoadPtr = new DeepPointer("mono.dll", 0x0021F654, 0x10, 0x164, 0x8, 0xC);
             _ignorePIDs = new List<int>();
         }
 
@@ -89,13 +95,14 @@ namespace LiveSplit.DXTF
 
                     Debug.WriteLine("[NoLoads] Got games process!");
 
-                    bool isLoading;
                     bool prevIsLoading = false;
                     bool loadingStarted = false;
+                    string prevLevelName = "";
 
                     while (!game.HasExited)
                     {
-                        _IsLoading.Deref(game, out isLoading);
+                        bool isLoading = _MJustLoadedLevel.Deref<bool>(game);
+                        string levelName = _MLevelToLoadPtr.DerefString(game, ReadStringType.UTF16, 40, "");
 
                         if (isLoading != prevIsLoading)
                         {
@@ -131,10 +138,40 @@ namespace LiveSplit.DXTF
                                         }
                                     }, null);
                                 }
+
+                                if (levelName == "CostaRicaSafehouse")
+                                {
+                                    //Autorestart + autostart invoke event
+                                    _uiThread.Post(d =>
+                                    {
+                                        if (this.OnFirstLevelLoad != null)
+                                        {
+                                            this.OnFirstLevelLoad(this, EventArgs.Empty);
+                                        }
+                                    }, null);
+                                }
                             }
                         }
 
+                        if(levelName != prevLevelName && prevLevelName != "" && levelName != "")
+						{
+                            if(levelName == "CostaRicaSafehouse")
+							{
+                                //Autorestart + autostart invoke event
+                                _uiThread.Post(d =>
+                                {
+                                    if (this.OnFirstLevelAutostart != null)
+                                    {
+                                        this.OnFirstLevelAutostart(this, EventArgs.Empty);
+                                    }
+                                }, null);
+                            }
+
+                            Debug.WriteLine($"Level changed: {prevLevelName} -> {levelName}");
+						}
+
                         prevIsLoading = isLoading;
+                        prevLevelName = levelName;
 
                         frameCounter++;
 

@@ -85,7 +85,6 @@ namespace LiveSplit.DXTF
         public override void Dispose() { }
         public override XmlNode GetSettings(XmlDocument document) { return document.CreateElement("Settings"); }
         public override Control GetSettingsControl(LayoutMode mode) { return null; }
-        //public override void RenameComparison(string oldName, string newName) { }
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode) { }
         public override void SetSettings(XmlNode settings) { }
     }
