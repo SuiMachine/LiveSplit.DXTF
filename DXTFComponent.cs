@@ -109,7 +109,7 @@ namespace LiveSplit.DXTF
 
         public override XmlNode GetSettings(XmlDocument document)
         {
-            return this.GetSettings(document);
+            return this.Settings.GetSettings(document);
         }
 
         public override Control GetSettingsControl(LayoutMode mode)

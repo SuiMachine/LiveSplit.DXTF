@@ -20,6 +20,10 @@ namespace LiveSplit.DXTF
         {
             InitializeComponent();
 
+            this.CB_Autorestart.DataBindings.Add("Checked", this, "AutorestartOnFirstLevel", false, DataSourceUpdateMode.OnPropertyChanged);
+            this.CB_Autostart.DataBindings.Add("Checked", this, "StartOnFirstLevelLoad", false, DataSourceUpdateMode.OnPropertyChanged);
+
+
             //defaults
             StartOnFirstLevelLoad = DEFAULT_STARTONFIRSTLEVELLOAD;
             AutorestartOnFirstLevel = DEFAULT_AUTORESTARTONFIRSTLEVEL;
