@@ -1,37 +1,45 @@
 <updates>
+	<update version="1.1.2">
+		<files>
+			<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
+		</files>
+		<changelog>
+			<change>Changed the read pointer to more accurate one (thanks COYOTL!).</change>
+		</changelog>
+	</update>
 	<update version="1.1.1">
-	<files>
-	<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
-	</files>
-	<changelog>
-	<change>Fixed freezing when opening settings (toggles still don't work).</change>
-	</changelog>
+		<files>
+			<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
+		</files>
+			<changelog>
+				<change>Fixed freezing when opening settings.</change>
+			</changelog>
 	</update>
 	<update version="1.1.0">
-	<files>
-	<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
-	</files>
-	<changelog>
-	<change>A stub was added for autosplitting (coming in future version).</change>
-	<change>Hopefully more accurate load removal.</change>
-	<change>Autorestart on intro load.</change>
-	<change>Autostart on intro loaded added.</change>
-	</changelog>
+		<files>
+			<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
+		</files>
+		<changelog>
+			<change>A stub was added for autosplitting (coming in future version).</change>
+			<change>Hopefully more accurate load removal.</change>
+			<change>Autorestart on intro load.</change>
+			<change>Autostart on intro loaded added.</change>
+		</changelog>
 	</update>
 <update version="1.0.1">
-<files>
-<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
-</files>
-<changelog>
-<change>LiveSplit 1.6 compatibility</change>
-</changelog>
+	<files>
+		<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
+	</files>
+	<changelog>
+		<change>LiveSplit 1.6 compatibility</change>
+	</changelog>
 </update>
 <update version="1.0.0">
-<files>
-<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
-</files>
-<changelog>
-<change>Initial release.</change>
-</changelog>
-</update>
+	<files>
+		<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
+	</files>
+	<changelog>
+		<change>Initial release.</change>
+	</changelog>
+	</update>
 </updates>

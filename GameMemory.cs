@@ -40,8 +40,10 @@ namespace LiveSplit.DXTF
         {
             resetSplitStates();
 
-            _MJustLoadedLevel = new DeepPointer("mono.dll", 0x0021F654, 0x10, 0x164, 0x13);
-            _MLevelToLoadPtr = new DeepPointer("mono.dll", 0x0021F654, 0x10, 0x164, 0x8, 0xC);
+            _MJustLoadedLevel = new DeepPointer(0x009E2A64, 0x50, 0x8, 0x50, 0x164, 0x13);
+            _MLevelToLoadPtr = new DeepPointer(0x009E2A64, 0x50, 0x8, 0x50, 0x164, 0x8, 0xC);
+
+
             _ignorePIDs = new List<int>();
         }
 
