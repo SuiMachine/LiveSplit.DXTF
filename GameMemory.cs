@@ -10,6 +10,33 @@ using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.DXTF
 {
+    #region Game Data
+    public enum GameState
+    {
+        Startup,
+        FadeStaticOut,
+        FadeKeyArtIn,
+        FadeKeyArtOut,
+        ObbDownload,
+        LoadLocalization,
+        PreMenu,
+        Menu,
+        FadeBlackToGameLoad,
+        FadeInGameLoad,
+        FadeOutGameLoad,
+        WaitingOnLoad,
+        Game,
+        Paused,
+        FadeBlackToMenuLoad,
+        FadeInMenuLoad,
+        FramePadding,
+        LoadMenuFromGame,
+        SetupMenuFromGame,
+        FadeOutMenuLoad
+    }
+    #endregion
+
+
     class GameMemory
     {
         public event EventHandler OnLoadStarted;
@@ -23,6 +50,7 @@ namespace LiveSplit.DXTF
         private SynchronizationContext _uiThread;
         private List<int> _ignorePIDs;
 
+        private DeepPointer _MGameState;
         private DeepPointer _MJustLoadedLevel;
         private DeepPointer _MLevelToLoadPtr;
 
@@ -41,6 +69,7 @@ namespace LiveSplit.DXTF
             resetSplitStates();
 
             _MJustLoadedLevel = new DeepPointer(0x009E2A64, 0x50, 0x8, 0x50, 0x164, 0x13);
+            _MGameState = new DeepPointer(0x009E2A64, 0x50, 0x8, 0x50, 0x164, 0x0, 0x58);
             _MLevelToLoadPtr = new DeepPointer(0x009E2A64, 0x50, 0x8, 0x50, 0x164, 0x8, 0xC);
 
 
@@ -97,36 +126,68 @@ namespace LiveSplit.DXTF
 
                     Debug.WriteLine("[NoLoads] Got games process!");
 
-                    bool prevIsLoading = false;
+                    GameState prevGameState = GameState.Startup;
+                    bool prevIsJustLoadedLevel = false;
                     bool loadingStarted = false;
                     string prevLevelName = "";
 
                     while (!game.HasExited)
                     {
-                        bool isLoading = _MJustLoadedLevel.Deref<bool>(game);
+                        bool isJustLoadedLevel = _MJustLoadedLevel.Deref<bool>(game);
+                        GameState gameState = _MGameState.Deref<GameState>(game);
                         string levelName = _MLevelToLoadPtr.DerefString(game, ReadStringType.UTF16, 40, "");
 
-                        if (isLoading != prevIsLoading)
+                        if (gameState != prevGameState)
                         {
-                            if (isLoading)
+                            switch (gameState)
                             {
-                                Debug.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
+                                case GameState.FadeInGameLoad:
+                                case GameState.WaitingOnLoad:
+                                case GameState.FadeOutGameLoad:
+									{
+                                        Debug.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
 
-                                loadingStarted = true;
+                                        loadingStarted = true;
 
-                                // pause game timer
-                                _uiThread.Post(d =>
-                                {
-                                    if (this.OnLoadStarted != null)
-                                    {
-                                        this.OnLoadStarted(this, EventArgs.Empty);
+                                        // pause game timer
+                                        _uiThread.Post(d =>
+                                        {
+                                            if (this.OnLoadStarted != null)
+                                            {
+                                                this.OnLoadStarted(this, EventArgs.Empty);
+                                            }
+                                        }, null);
                                     }
-                                }, null);
-                            }
-                            else
-                            {
-                                Debug.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
+                                    break;
+                                default:
+									{
+                                        Debug.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
 
+                                        if (loadingStarted)
+                                        {
+                                            loadingStarted = false;
+
+                                            // unpause game timer
+                                            _uiThread.Post(d =>
+                                            {
+                                                if (this.OnLoadFinished != null)
+                                                {
+                                                    this.OnLoadFinished(this, EventArgs.Empty);
+                                                }
+                                            }, null);
+                                        }
+                                    }
+                                    break;
+                            }
+
+                            Debug.WriteLine($"Game state changed from {prevGameState} to {gameState}");
+                        }
+
+
+                        if (isJustLoadedLevel != prevIsJustLoadedLevel)
+                        {
+                            if(!isJustLoadedLevel)
+							{
                                 if (loadingStarted)
                                 {
                                     loadingStarted = false;
@@ -142,8 +203,8 @@ namespace LiveSplit.DXTF
                                 }
 
                                 if (levelName == "CostaRicaSafehouse")
-                                {
-                                    //Autorestart + autostart invoke event
+								{
+                                    //Autostart invoke event
                                     _uiThread.Post(d =>
                                     {
                                         if (this.OnFirstLevelLoad != null)
@@ -155,11 +216,11 @@ namespace LiveSplit.DXTF
                             }
                         }
 
-                        if(levelName != prevLevelName && prevLevelName != "" && levelName != "")
+                        if (levelName != prevLevelName && prevLevelName != "" && levelName != "")
 						{
-                            if(levelName == "CostaRicaSafehouse")
-							{
-                                //Autorestart + autostart invoke event
+                            if (levelName == "CostaRicaSafehouse" && prevLevelName == "Menu")
+                            {
+                                //Autorestart
                                 _uiThread.Post(d =>
                                 {
                                     if (this.OnFirstLevelAutostart != null)
@@ -172,8 +233,9 @@ namespace LiveSplit.DXTF
                             Debug.WriteLine($"Level changed: {prevLevelName} -> {levelName}");
 						}
 
-                        prevIsLoading = isLoading;
+                        prevGameState = gameState;
                         prevLevelName = levelName;
+                        prevIsJustLoadedLevel = isJustLoadedLevel;
 
                         frameCounter++;
 
