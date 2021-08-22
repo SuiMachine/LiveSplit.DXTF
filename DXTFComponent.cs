@@ -4,7 +4,6 @@ using LiveSplit.UI;
 using System;
 using System.Xml;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace LiveSplit.DXTF
 {
@@ -23,6 +22,7 @@ namespace LiveSplit.DXTF
         private TimerModel _timer;
         private GameMemory _gameMemory;
         private LiveSplitState _state;
+        private bool[] missionSplits;
 
         public DXTFComponent(LiveSplitState state, bool isLayoutComponent)
         {
@@ -32,20 +32,70 @@ namespace LiveSplit.DXTF
             _timer = new TimerModel { CurrentState = state };
             _timer.CurrentState.OnStart += timer_OnStart;
 
+            missionSplits = new bool[(int)Missions.Total];
             this.Settings = new DXTFSettings();
 
             _gameMemory = new GameMemory(this.Settings);
 			_gameMemory.OnFirstLevelAutostart += _gameMemory_OnFirstLevelAutostart;
             _gameMemory.OnLoadStarted += gameMemory_OnLoadStarted;
             _gameMemory.OnLoadFinished += gameMemory_OnLoadFinished;
-            _gameMemory.OnLevelChanged += _gameMemory_OnLevelChanged;
+			_gameMemory.OnLevelChanged += _gameMemory_OnLevelChanged;
 			_gameMemory.OnFirstLevelLoad += _gameMemory_OnFirstLevelLoad;
 
             state.OnStart += State_OnStart;
             _gameMemory.StartMonitoring();
         }
 
-		private void _gameMemory_OnFirstLevelAutostart(object sender, EventArgs e)
+		private void _gameMemory_OnLevelChanged(object sender, int mission)
+        {
+            var missionEnum = (Missions)mission;
+            switch (missionEnum)
+            {
+                case Missions.Main_Moscow_KillKontrasky:
+                    if (!missionSplits[mission] && Settings.Split_00Moscow)
+                        _timer.Split();
+                    break;
+                case Missions.CostaRica1_ConspiracyConfrontNamir:
+                    if (!missionSplits[mission] && Settings.Split_01CostaRica)
+                        _timer.Split();
+                    break;
+                case Missions.Prologue_PanamaShadowAugs:
+                    if (!missionSplits[mission] && Settings.Split_02Prologue)
+                        _timer.Split();
+                    break;
+                case Missions.Main_Panama1_LocateAlvarezAraujo:
+                    if (!missionSplits[mission] && Settings.Split_03Panama1)
+                        _timer.Split();
+                    break;
+                case Missions.Main_Panama2_SecureNeuropozne:
+                    if (!missionSplits[mission] && Settings.Split_04Panama2)
+                        _timer.Split();
+                    break;
+                case Missions.Panama3_ShadowAugs:
+                    if (!missionSplits[mission] && Settings.Split_05Panama3)
+                        _timer.Split();
+                    break;
+                case Missions.Side_Panama4_DrugRunner:
+                    if (!missionSplits[mission] && Settings.Split_06Panama4)
+                        _timer.Split();
+                    break;
+                case Missions.Side_Panama5_MissingJunkie:
+                    if (!missionSplits[mission] && Settings.Split_07Panama5)
+                        _timer.Split();
+                    break;
+                case Missions.Side_Panama6_DirtyDeeds:
+                    if (!missionSplits[mission] && Settings.Split_08Panama6)
+                        _timer.Split();
+                    break;
+                case Missions.Panama7_RattingOut:
+                    if (!missionSplits[mission] && Settings.Split_09Panama7)
+                        _timer.Split();
+                    break;
+            }
+            missionSplits[mission] = true;
+        }
+
+        private void _gameMemory_OnFirstLevelAutostart(object sender, EventArgs e)
 		{
             if(this.Settings.AutorestartOnFirstLevel)
 			{
@@ -53,7 +103,7 @@ namespace LiveSplit.DXTF
 			}
 		}
 
-		public override void Dispose()
+        public override void Dispose()
         {
             this.Disposed = true;
             _timer.CurrentState.OnStart -= timer_OnStart;
@@ -76,14 +126,6 @@ namespace LiveSplit.DXTF
             _timer.InitializeGameTime();
         }
 
-        private void _gameMemory_OnLevelChanged(object sender, EventArgs e)
-        {
-            if(this.Settings.SplitOnLevelChange)
-			{
-                _timer.Split();
-			}
-        }
-
         private void _gameMemory_OnFirstLevelLoad(object sender, EventArgs e)
 		{
             if (this.Settings.StartOnFirstLevelLoad)
@@ -94,7 +136,10 @@ namespace LiveSplit.DXTF
 
         void State_OnStart(object sender, EventArgs e)
         {
-            _gameMemory.resetSplitStates();
+            for(int i=0; i<missionSplits.Length; i++)
+			{
+                missionSplits[i] = false;
+			}
         }
 
         void gameMemory_OnLoadStarted(object sender, EventArgs e)

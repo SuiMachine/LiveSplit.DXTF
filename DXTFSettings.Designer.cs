@@ -30,9 +30,10 @@
         {
 			this.tlpMain = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.CB_Autostart = new System.Windows.Forms.CheckBox();
 			this.CB_Autorestart = new System.Windows.Forms.CheckBox();
+			this.CB_Autostart = new System.Windows.Forms.CheckBox();
 			this.tlpMain.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -57,14 +58,25 @@
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this.groupBox2, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 53F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(437, 229);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(437, 346);
 			this.tableLayoutPanel1.TabIndex = 0;
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.groupBox2.Location = new System.Drawing.Point(3, 56);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(431, 287);
+			this.groupBox2.TabIndex = 1;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Split on:";
 			// 
 			// groupBox1
 			// 
@@ -76,17 +88,7 @@
 			this.groupBox1.Size = new System.Drawing.Size(431, 47);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "General control";
-			// 
-			// CB_Autostart
-			// 
-			this.CB_Autostart.AutoSize = true;
-			this.CB_Autostart.Location = new System.Drawing.Point(6, 19);
-			this.CB_Autostart.Name = "CB_Autostart";
-			this.CB_Autostart.Size = new System.Drawing.Size(71, 17);
-			this.CB_Autostart.TabIndex = 0;
-			this.CB_Autostart.Text = "Auto start";
-			this.CB_Autostart.UseVisualStyleBackColor = true;
+			this.groupBox1.Text = "General control:";
 			// 
 			// CB_Autorestart
 			// 
@@ -97,6 +99,16 @@
 			this.CB_Autorestart.TabIndex = 1;
 			this.CB_Autorestart.Text = "Restart splits";
 			this.CB_Autorestart.UseVisualStyleBackColor = true;
+			// 
+			// CB_Autostart
+			// 
+			this.CB_Autostart.AutoSize = true;
+			this.CB_Autostart.Location = new System.Drawing.Point(6, 19);
+			this.CB_Autostart.Name = "CB_Autostart";
+			this.CB_Autostart.Size = new System.Drawing.Size(71, 17);
+			this.CB_Autostart.TabIndex = 0;
+			this.CB_Autostart.Text = "Auto start";
+			this.CB_Autostart.UseVisualStyleBackColor = true;
 			// 
 			// DXTFSettings
 			// 
@@ -123,5 +135,6 @@
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox CB_Autorestart;
 		private System.Windows.Forms.CheckBox CB_Autostart;
+		private System.Windows.Forms.GroupBox groupBox2;
 	}
 }
