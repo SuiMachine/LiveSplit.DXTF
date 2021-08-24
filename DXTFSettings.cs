@@ -9,34 +9,41 @@ namespace LiveSplit.DXTF
 	[Serializable]
 	public class MissionSplit
 	{
+		[Serializable]
+		public class SubMissionSplit
+		{
+			[XmlAttribute] public string Name { get; set; }
+			[XmlAttribute] public bool Split { get; set; }
+
+			public SubMissionSplit(string Name, bool Split)
+			{
+				this.Name = Name;
+				this.Split = Split;
+			}
+
+			public void Restart()
+			{
+				Split = false;
+			}
+		}
+
 		[XmlAttribute] public string Name { get; set; }
-		[XmlAttribute] public bool Split { get; set; }
-		[XmlElement] public MissionSplit[] SubMissions { get; set; }
+		[XmlElement] public SubMissionSplit[] SubMissions { get; set; }
 
 		public MissionSplit()
 		{
 			Name = "";
-			Split = false;
-			SubMissions = new MissionSplit[0];
+			SubMissions = new SubMissionSplit[0];
 		}
 
-		public MissionSplit(string Name, bool Split)
+		public MissionSplit(string Name, SubMissionSplit[] SubMissions)
 		{
 			this.Name = Name;
-			this.Split = Split;
-			this.SubMissions = new MissionSplit[0];
-		}
-
-		public MissionSplit(string Name, bool Split, MissionSplit[] SubMissions)
-		{
-			this.Name = Name;
-			this.Split = Split;
 			this.SubMissions = SubMissions;
 		}
 
 		public void Restart()
 		{
-			Split = false;
 			foreach (var submission in SubMissions)
 			{
 				submission.Restart();
@@ -47,11 +54,30 @@ namespace LiveSplit.DXTF
 		{
 			return new MissionSplit[]
 			{
-				new MissionSplit("M1 - Kill Mikhail Kontarsky", true, new MissionSplit[]
+				new MissionSplit("M1 - Kill Mikhail Kontarsky", new SubMissionSplit[]
 				{
-					new MissionSplit("Objective 1", true),
-					new MissionSplit("Objective 2", true),
-					new MissionSplit("Objective 3", true)
+					new SubMissionSplit("Enter Hotel Novoe Rostov", false),
+					new SubMissionSplit("Unplug the decoy", false),
+					new SubMissionSplit("Decoy", true)
+				}),
+				new MissionSplit("M2 - Investigate Tyrants", new SubMissionSplit[]
+				{
+					new SubMissionSplit("Find Neuropzyne", false),
+					new SubMissionSplit("Contact Janus", false),
+					new SubMissionSplit("Talk to Anna", true),
+					new SubMissionSplit("Leave Costa Rica", true)
+				}),
+				new MissionSplit("M3 - The Killing Floor", new SubMissionSplit[]
+				{
+					new SubMissionSplit("Discover the truth", false),
+					new SubMissionSplit("Confront Namir", false)
+				}),
+				new MissionSplit("M4 - Investigate Tyrants", new SubMissionSplit[]
+				{
+					new SubMissionSplit("Find Neuropzyne", false),
+					new SubMissionSplit("Contact Janus", true),
+					new SubMissionSplit("Talk to Anna", true),
+					new SubMissionSplit("Leave Costa Rica", true)
 				})
 			};
 		}
